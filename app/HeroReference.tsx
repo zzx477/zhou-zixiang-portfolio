@@ -86,13 +86,39 @@ const reel = [
 export function HeroReference() {
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const [videoError, setVideoError] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const activeVideoItem = reel.find((item) => item.link === activeVideo);
+
+  const openVideo = (url: string) => {
+    setVideoError(false);
+    setIsVideoPlaying(false);
+    setActiveVideo(url);
+  };
+
+  const closeVideo = () => {
+    setActiveVideo(null);
+    setIsVideoPlaying(false);
+    setVideoError(false);
+  };
+
+  const playVideo = async () => {
+    const player = videoRef.current;
+    if (!player) return;
+    setVideoError(false);
+    try {
+      await player.play();
+      setIsVideoPlaying(true);
+    } catch {
+      setVideoError(true);
+      setIsVideoPlaying(false);
+    }
+  };
 
   useEffect(() => {
     if (!activeVideo) return undefined;
     const previousOverflow = document.body.style.overflow;
-    const closeOnEscape = (event: KeyboardEvent) => { if (event.key === "Escape") { setActiveVideo(null); setIsVideoPlaying(false); } };
+    const closeOnEscape = (event: KeyboardEvent) => { if (event.key === "Escape") closeVideo(); };
     document.body.style.overflow = "hidden";
     window.addEventListener("keydown", closeOnEscape);
     return () => {
@@ -185,7 +211,7 @@ export function HeroReference() {
         </aside>
       </div><div className="reference-reel" aria-label="作品预览">
         {reel.map((item, index) => (
-          <a className={`reel-card reel-${item.visual} cursor-target`} href={item.link || "#work"} onClick={(event) => { if (item.link) { event.preventDefault(); setActiveVideo(item.link); setIsVideoPlaying(false); } }} key={item.title}>
+          <button className={`reel-card reel-${item.visual} cursor-target`} type="button" onClick={() => item.link && openVideo(item.link)} key={item.title}>
             <div className="reel-media">
               {item.poster && <img className="reel-poster-image" src={publicPath(item.poster)} alt={`${item.title}视频封面`} />}
               <span className="reel-category">{item.category}</span>
@@ -197,20 +223,29 @@ export function HeroReference() {
               <div className="reel-tags">{item.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
               <b>0{index + 1}</b>
             </div>
-          </a>
+          </button>
         ))}
       </div>
 
       {activeVideo && (
-        <div className="video-player-modal" role="dialog" aria-modal="true" aria-label="AI漫剧视频播放器" onClick={() => { setActiveVideo(null); setIsVideoPlaying(false); }}>
+        <div className="video-player-modal" role="dialog" aria-modal="true" aria-label="作品视频播放器" onClick={closeVideo}>
           <div className="video-player-frame" onClick={(event) => event.stopPropagation()}>
-            <button className="video-player-close" type="button" aria-label="关闭视频" onClick={() => { setActiveVideo(null); setIsVideoPlaying(false); }}>CLOSE ×</button>
-            <video ref={videoRef} src={activeVideo} poster={publicPath(activeVideoItem?.poster || "/feng-jiuyou-poster.png")} controls playsInline preload="metadata" controlsList="nodownload" disablePictureInPicture onEnded={() => setIsVideoPlaying(false)} onContextMenu={(event) => event.preventDefault()} />
-            {!isVideoPlaying && (
-              <button className={`video-player-cover video-player-cover--${activeVideoItem?.visual || "office"}`} type="button" aria-label="播放封九幽" onClick={() => { setIsVideoPlaying(true); requestAnimationFrame(() => { void videoRef.current?.play(); }); }}>
+            <button className="video-player-close" type="button" aria-label="关闭视频" onClick={closeVideo}>CLOSE ×</button>
+            <video ref={videoRef} poster={publicPath(activeVideoItem?.poster || "/feng-jiuyou-poster.png")} controls playsInline preload="metadata" controlsList="nodownload" disablePictureInPicture onPlay={() => setIsVideoPlaying(true)} onPause={() => setIsVideoPlaying(false)} onEnded={() => setIsVideoPlaying(false)} onError={() => { setVideoError(true); setIsVideoPlaying(false); }} onContextMenu={(event) => event.preventDefault()}>
+              <source src={activeVideo} type="video/mp4" />
+            </video>
+            {!isVideoPlaying && !videoError && (
+              <button className={`video-player-cover video-player-cover--${activeVideoItem?.visual || "office"}`} type="button" aria-label={`播放${activeVideoItem?.title || "作品视频"}`} onClick={() => void playVideo()}>
                 <img src={publicPath(activeVideoItem?.poster || "/feng-jiuyou-poster.png")} alt={`${activeVideoItem?.title || "AI漫剧"}视频封面`} />
                 <span><i>▶</i> PLAY AI COMIC</span>
               </button>
+            )}
+            {videoError && (
+              <div className="video-player-error" role="status">
+                <strong>当前浏览器无法播放这个视频</strong>
+                <span>视频编码或云端响应方式与当前设备不兼容，请更换新版 Chrome / Edge / Safari 后重试。</span>
+                <button type="button" onClick={() => { setVideoError(false); videoRef.current?.load(); }}>RETRY</button>
+              </div>
             )}
           </div>
         </div>

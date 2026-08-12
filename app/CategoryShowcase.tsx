@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import BorderGlow from "./BorderGlow";
 import { publicPath } from "./public-paths";
 
@@ -18,6 +18,35 @@ type Category = {
   note: string;
   videos?: VideoItem[];
 };
+
+function PortfolioVideo({ video }: { video: VideoItem }) {
+  const [failed, setFailed] = useState(false);
+  const playerRef = useRef<HTMLVideoElement>(null);
+
+  return (
+    <div className="category-video-player">
+      <video
+        ref={playerRef}
+        poster={publicPath(video.poster)}
+        controls
+        playsInline
+        preload="metadata"
+        controlsList="nodownload"
+        onCanPlay={() => setFailed(false)}
+        onError={() => setFailed(true)}
+      >
+        <source src={video.url} type="video/mp4" />
+      </video>
+      {failed && (
+        <div className="category-video-error" role="status">
+          <strong>当前设备暂时无法播放</strong>
+          <span>请使用新版浏览器重试；该视频也可能需要转换为 H.264 网页版。</span>
+          <button type="button" onClick={() => { setFailed(false); playerRef.current?.load(); }}>重新加载</button>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function CategoryShowcase({ categories }: { categories: Category[] }) {
   const [active, setActive] = useState<Category | null>(null);
@@ -101,13 +130,7 @@ export default function CategoryShowcase({ categories }: { categories: Category[
                   {active.videos.map((video, index) => (
                     <article className="category-video-item" key={video.url}>
                       <div className="category-video-item__media">
-                        <video
-                          src={video.url}
-                          poster={publicPath(video.poster)}
-                          controls
-                          playsInline
-                          preload="none"
-                        />
+                        <PortfolioVideo video={video} />
                         <span className="category-video-item__index">{String(index + 1).padStart(2, "0")}</span>
                       </div>
                       <div className="category-video-item__copy">

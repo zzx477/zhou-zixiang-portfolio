@@ -1390,6 +1390,11 @@
   max-height: none;
   object-fit: cover;
 }
+.category-video-player { position: absolute; inset: 0; }
+.category-video-error { position: absolute; z-index: 3; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 7px; padding: 18px; color: rgba(239,246,255,.92); background: rgba(4,9,17,.9); text-align: center; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+.category-video-error strong { font-size: 13px; font-weight: 500; }
+.category-video-error span { max-width: 360px; color: rgba(203,221,241,.58); font-size: 9px; line-height: 1.6; }
+.category-video-error button { margin-top: 3px; padding: 7px 11px; border: 1px solid rgba(194,166,255,.34); border-radius: 999px; color: #e6dbff; background: rgba(126,91,188,.18); font-size: 9px; cursor: pointer; }
 .category-video-item__index {
   position: absolute;
   z-index: 2;
