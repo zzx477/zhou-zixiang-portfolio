@@ -1,0 +1,66 @@
+﻿.circular-text {
+  --ring-size: 156px;
+  --ring-radius: 62px;
+  position: relative;
+  width: var(--ring-size);
+  height: var(--ring-size);
+  flex: 0 0 var(--ring-size);
+  border: 1px solid rgba(202, 170, 255, 0.32);
+  border-radius: 50%;
+  color: #d9c2ff;
+  background: radial-gradient(circle, rgba(165, 123, 220, 0.1), rgba(20, 13, 30, 0.12) 58%, transparent 72%);
+  box-shadow: inset 0 0 30px rgba(177, 132, 235, 0.08), 0 0 28px rgba(134, 85, 194, 0.12);
+  cursor: none;
+  animation: circular-text-spin var(--spin-duration) linear infinite;
+  transform-origin: center;
+  transition: border-color 300ms ease, box-shadow 300ms ease, scale 300ms ease;
+}
+.circular-text::before,
+.circular-text::after {
+  content: "";
+  position: absolute;
+  inset: 9px;
+  border: 1px solid rgba(220, 198, 255, 0.14);
+  border-radius: 50%;
+}
+.circular-text::after {
+  inset: 50%;
+  width: 4px;
+  height: 4px;
+  border: 0;
+  background: #e9dcff;
+  box-shadow: 0 0 14px rgba(205, 163, 255, 0.9);
+  transform: translate(-50%, -50%);
+}
+.circular-text__letter {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  color: rgba(232, 220, 255, 0.84);
+  font: 8px/10px ui-monospace, SFMono-Regular, Consolas, monospace;
+  letter-spacing: 0.08em;
+  text-align: center;
+  transform: rotate(var(--angle)) translateY(calc(var(--ring-radius) * -1)) rotate(calc(var(--angle) * -1));
+  transform-origin: center;
+}
+.circular-text__core {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: rgba(235, 224, 255, 0.58);
+  font: 8px/1 ui-monospace, SFMono-Regular, Consolas, monospace;
+  letter-spacing: 0.16em;
+  transform: rotate(-2deg);
+}
+.circular-text--speedUp { animation-duration: calc(var(--spin-duration) / 4); scale: 1.04; }
+.circular-text--slowDown { animation-duration: calc(var(--spin-duration) * 2); }
+.circular-text--pause { animation-play-state: paused; }
+.circular-text--goBonkers { animation-duration: calc(var(--spin-duration) / 10); scale: .94; }
+.circular-text:hover { border-color: rgba(220, 192, 255, 0.72); box-shadow: inset 0 0 34px rgba(177, 132, 235, 0.14), 0 0 42px rgba(134, 85, 194, 0.2); }
+@keyframes circular-text-spin { from { rotate: 0deg; } to { rotate: 360deg; } }
+@media (max-width: 980px) { .circular-text { --ring-size: 122px; --ring-radius: 48px; } .circular-text__letter { font-size: 7px; } }
+@media (max-width: 720px) { .circular-text { --ring-size: 92px; --ring-radius: 36px; } .circular-text__core { font-size: 6px; } .circular-text__letter { font-size: 6px; } }

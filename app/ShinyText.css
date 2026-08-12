@@ -1,0 +1,43 @@
+.shiny-text {
+  position: relative;
+  display: inline-block;
+  color: var(--shiny-base, #b5b5b5);
+  -webkit-text-fill-color: var(--shiny-base, #b5b5b5);
+}
+.shiny-text::after {
+  content: attr(aria-label);
+  position: absolute;
+  inset: 0;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  background-image: var(--shiny-gradient);
+  background-size: 200% auto;
+  background-position: 150% center;
+  background-repeat: no-repeat;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation-name: shiny-text-sweep;
+  animation-duration: var(--shiny-duration, 2s);
+  animation-delay: var(--shiny-delay, 0s);
+  animation-direction: var(--shiny-direction, normal);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  pointer-events: none;
+}
+.shiny-text--yoyo::after {
+  animation-name: shiny-text-yoyo;
+}
+.shiny-text--disabled::after {
+  display: none;
+}
+.shiny-text--pause-hover:hover::after {
+  animation-play-state: paused;
+}
+@keyframes shiny-text-sweep {
+  from { background-position: 150% center; }
+  to { background-position: -50% center; }
+}
+@keyframes shiny-text-yoyo {
+  from { background-position: 150% center; }
+  to { background-position: -50% center; }
+}

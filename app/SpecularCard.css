@@ -1,0 +1,26 @@
+.specular-card {
+  position: relative;
+  isolation: isolate;
+}
+
+.specular-card__fx {
+  position: absolute;
+  z-index: 20;
+  inset: -18px;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.specular-card__fx canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.specular-card:hover {
+  border-color: rgba(255, 255, 255, 0.32);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .specular-card__fx { display: none; }
+}

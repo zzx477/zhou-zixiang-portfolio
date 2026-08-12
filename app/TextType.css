@@ -1,0 +1,6 @@
+.text-type { display: inline-block; white-space: pre-wrap; }
+.text-type__cursor { display: inline-block; margin-left: .08em; color: #a8c4ff; font: inherit; opacity: 1; text-shadow: 0 0 16px rgba(120, 164, 255, .72); }
+.text-type__cursor--hidden { display: none; }
+.reference-title-line.text-type { display: block !important; min-height: .88em; }
+.reference-title-line .text-type__content { display: inline; }
+.reference-title-type-cursor { color: #a9c5ff; }

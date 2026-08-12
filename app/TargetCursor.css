@@ -1,0 +1,42 @@
+﻿.target-cursor-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+  z-index: 10000;
+  mix-blend-mode: screen;
+  will-change: transform;
+  transform-origin: center center;
+}
+.target-cursor-dot {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 15px currentColor;
+}
+.target-cursor-corner {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 14px;
+  height: 14px;
+  border: 2px solid;
+  will-change: transform;
+  transform-origin: center center;
+}
+.corner-tl { border-right: 0; border-bottom: 0; }
+.corner-tr { border-left: 0; border-bottom: 0; }
+.corner-br { border-left: 0; border-top: 0; }
+.corner-bl { border-right: 0; border-top: 0; }
+.cursor-target { cursor: none; }
+@media (pointer: coarse), (max-width: 768px) {
+  .target-cursor-wrapper { display: none; }
+}
+/* The idle cursor is always an outlined bracket + dot; never a filled block. */
+.target-cursor-corner { background: transparent !important; }
