@@ -17,6 +17,30 @@
 /.next/
 /.vinext/
 /out/
+/.nojekyll
+/_next/
+/assets/
+/404/
+/_not-found/
+/404.html
+/index.html
+/index.txt
+/__next*.txt
+/ai-comic-posters/
+/commercial-posters/
+/entertainment-posters/
+/gallery/
+/favicon.svg
+/file.svg
+/globe.svg
+/window.svg
+/hero-character-clean.png
+/hero-character-source.png
+/feng-jiuyou-poster.png
+/second-video-cover.jpg
+/third-video-cover.jpg
+/fourth-video-cover.jpg
+/fifth-video-cover.jpg
 
 # misc
 .DS_Store

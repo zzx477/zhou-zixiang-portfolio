@@ -76,7 +76,7 @@ const services = [
 ];
 
 const reel = [
-  { title: "封九幽", category: "AI 漫剧", visual: "office", poster: "/feng-jiuyou-poster.png", year: "2026", description: "以暗红末世场景和角色张力推进情绪，完成 AI 漫剧视觉与节奏剪辑。", tags: ["AI 漫剧", "角色视觉", "节奏剪辑"], link: "https://zuopinji-1449420565.cos.ap-guangzhou.myqcloud.com/%E5%B0%81%E4%B9%9D%E5%B9%BD.mp4" },
+  { title: "封九幽", category: "AI 漫剧", visual: "office", poster: "/feng-jiuyou-poster.webp", year: "2026", description: "以暗红末世场景和角色张力推进情绪，完成 AI 漫剧视觉与节奏剪辑。", tags: ["AI 漫剧", "角色视觉", "节奏剪辑"], link: "https://zuopinji-1449420565.cos.ap-guangzhou.myqcloud.com/%E5%B0%81%E4%B9%9D%E5%B9%BD.mp4" },
   { title: "奇幻AI展示视频", category: "AI 漫剧", visual: "portrait", poster: "/second-video-cover.jpg", year: "2026", link: "https://zuopinji-1449420565.cos.ap-guangzhou.myqcloud.com/a7dc07ae39460f8cc83141893a2b7109.mp4", description: "围绕人物关系搭建悬念感，用镜头呼吸和音效留白推进叙事。", tags: ["剧情剪辑", "情绪叙事", "声音设计"] },
   { title: "零食信息流广告", category: "商业广告", visual: "city", poster: "/third-video-cover.jpg", year: "2026", link: "https://zuopinji-1449420565.cos.ap-guangzhou.myqcloud.com/3%E6%9C%8815%E6%97%A5-%E9%85%B1%E6%9D%BF%E9%B8%AD-1.mp4", description: "用短促节奏和食欲色彩构建品牌记忆，让每个镜头都服务于转化。", tags: ["信息流广告", "产品视觉", "节奏剪辑"] },
   { title: "真人风格AIGC", category: "AIGC 影像", visual: "light", poster: "/fourth-video-cover.jpg", year: "2026", link: "https://zuopinji-1449420565.cos.ap-guangzhou.myqcloud.com/%E7%9C%9F%E4%BA%BA%E9%A3%8E%E6%A0%BC%E5%B1%95%E7%A4%BA.mp4", description: "将真实人物质感、自然光影与 AIGC 生成融合，探索品牌内容更具临场感的表达。", tags: ["真人风格", "AIGC 视觉", "品牌内容"] },
@@ -142,8 +142,10 @@ export function HeroReference() {
       <div className="reference-art" aria-hidden="true">
         <img
           className="hero-character-image"
-          src={publicPath("/hero-character-clean.png")}
+          src={publicPath("/hero-character-clean.webp")}
           alt=""
+          fetchPriority="high"
+          decoding="async"
         />
       </div>
 
@@ -213,9 +215,9 @@ export function HeroReference() {
         {reel.map((item, index) => (
           <button className={`reel-card reel-${item.visual} cursor-target`} type="button" onClick={() => item.link && openVideo(item.link)} key={item.title}>
             <div className="reel-media">
-              {item.poster && <img className="reel-poster-image" src={publicPath(item.poster)} alt={`${item.title}视频封面`} />}
+              {item.poster && <img className="reel-poster-image" src={publicPath(item.poster)} alt={`${item.title}视频封面`} loading={index === 0 ? "eager" : "lazy"} decoding="async" />}
               <span className="reel-category">{item.category}</span>
-'              <span className="reel-play">▶</span>'
+              <span className="reel-play">▶</span>
             </div>
             <div className="reel-details">
               <div className="reel-heading"><strong>{item.title}</strong><time>{item.year}</time></div>
@@ -231,12 +233,12 @@ export function HeroReference() {
         <div className="video-player-modal" role="dialog" aria-modal="true" aria-label="作品视频播放器" onClick={closeVideo}>
           <div className="video-player-frame" onClick={(event) => event.stopPropagation()}>
             <button className="video-player-close" type="button" aria-label="关闭视频" onClick={closeVideo}>CLOSE ×</button>
-            <video ref={videoRef} poster={publicPath(activeVideoItem?.poster || "/feng-jiuyou-poster.png")} controls playsInline preload="metadata" controlsList="nodownload" disablePictureInPicture onPlay={() => setIsVideoPlaying(true)} onPause={() => setIsVideoPlaying(false)} onEnded={() => setIsVideoPlaying(false)} onError={() => { setVideoError(true); setIsVideoPlaying(false); }} onContextMenu={(event) => event.preventDefault()}>
+            <video ref={videoRef} poster={publicPath(activeVideoItem?.poster || "/feng-jiuyou-poster.webp")} controls playsInline preload="none" controlsList="nodownload" disablePictureInPicture onPlay={() => setIsVideoPlaying(true)} onPause={() => setIsVideoPlaying(false)} onEnded={() => setIsVideoPlaying(false)} onError={() => { setVideoError(true); setIsVideoPlaying(false); }} onContextMenu={(event) => event.preventDefault()}>
               <source src={activeVideo} type="video/mp4" />
             </video>
             {!isVideoPlaying && !videoError && (
               <button className={`video-player-cover video-player-cover--${activeVideoItem?.visual || "office"}`} type="button" aria-label={`播放${activeVideoItem?.title || "作品视频"}`} onClick={() => void playVideo()}>
-                <img src={publicPath(activeVideoItem?.poster || "/feng-jiuyou-poster.png")} alt={`${activeVideoItem?.title || "AI漫剧"}视频封面`} />
+                <img src={publicPath(activeVideoItem?.poster || "/feng-jiuyou-poster.webp")} alt={`${activeVideoItem?.title || "AI漫剧"}视频封面`} />
                 <span><i>▶</i> PLAY AI COMIC</span>
               </button>
             )}

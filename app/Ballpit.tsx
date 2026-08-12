@@ -157,7 +157,14 @@ export function Ballpit({
 
     let frame = 0;
     let previous = performance.now();
+    let isVisible = true;
+    let isPageVisible = document.visibilityState === "visible";
     const animate = (now: number) => {
+      frame = requestAnimationFrame(animate);
+      if (!isVisible || !isPageVisible) {
+        previous = now;
+        return;
+      }
       const delta = Math.min((now - previous) / 16.67, 2);
       previous = now;
 
@@ -215,12 +222,21 @@ export function Ballpit({
       balls.instanceMatrix.needsUpdate = true;
       keyLight.position.x += ((pointerActive ? targetX : 0) - keyLight.position.x) * 0.02;
       renderer.render(scene, camera);
-      frame = requestAnimationFrame(animate);
     };
+    const visibilityObserver = new IntersectionObserver(([entry]) => {
+      isVisible = entry.isIntersecting;
+    }, { rootMargin: "180px" });
+    visibilityObserver.observe(host);
+    const handleVisibilityChange = () => {
+      isPageVisible = document.visibilityState === "visible";
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
     frame = requestAnimationFrame(animate);
 
     return () => {
       cancelAnimationFrame(frame);
+      visibilityObserver.disconnect();
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
       observer.disconnect();
       interactionRoot.removeEventListener("pointermove", onPointerMove);
       interactionRoot.removeEventListener("pointerleave", onPointerLeave);

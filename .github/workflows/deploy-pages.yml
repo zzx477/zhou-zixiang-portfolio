@@ -1,9 +1,8 @@
 name: Deploy portfolio to GitHub Pages
 
 on:
-  workflow_run:
-    workflows: ["pages build and deployment"]
-    types: [completed]
+  push:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -41,6 +40,15 @@ jobs:
 
       - name: Disable Jekyll processing
         run: touch out/.nojekyll
+
+      - name: Verify exported runtime and media paths
+        shell: bash
+        run: |
+          test -f out/index.html
+          test -d out/_next/static/chunks
+          test -f out/hero-character-clean.webp
+          test -f out/gallery/thumbs/asset-01.webp
+          ! grep -q '/zhou-zixiang-portfolio/public/' out/index.html
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4

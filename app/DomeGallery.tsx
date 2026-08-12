@@ -3,6 +3,7 @@
 import { useDrag } from "@use-gesture/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "./DomeGallery.css";
+import { publicPath } from "./public-paths";
 
 export type DomeImage = {
   src: string;
@@ -23,6 +24,11 @@ type DomeGalleryProps = {
 
 type Rotation = { x: number; y: number };
 
+const galleryThumbnail = (src: string) => {
+  const normalized = src.replace(/\/gallery\/([^/]+)\.(?:png|jpe?g)$/i, "/gallery/thumbs/$1.webp");
+  return publicPath(normalized);
+};
+
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 
 export function DomeGallery({
@@ -38,7 +44,7 @@ export function DomeGallery({
   const stageRef = useRef<HTMLDivElement>(null);
   const rotationRef = useRef<Rotation>({ x: -5, y: 0 });
   const inertiaFrame = useRef<number | null>(null);
-  const [rotation, setRotation] = useState<Rotation>(rotationRef.current);
+  const [rotation, setRotation] = useState<Rotation>(() => ({ x: -5, y: 0 }));
   const [stageSize, setStageSize] = useState({ width: 1200, height: 720 });
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
@@ -89,7 +95,7 @@ export function DomeGallery({
     const theta = (column / columns) * 360 - 180 + (row === 1 ? 10 : 0);
     const phi = -22 + row * 22;
     return { index, theta, phi, image: images[index % images.length] };
-  }), [columns, images, rows, tile]);
+  }), [columns, images, rows]);
 
   const bind = useDrag(({ active, movement: [mx, my], velocity: [vx, vy], direction: [dx, dy], memo }) => {
     const origin = memo ?? rotationRef.current;
@@ -157,7 +163,21 @@ export function DomeGallery({
                 transform: `translate(-50%, -50%) rotateY(${cell.theta}deg) rotateX(${cell.phi}deg) translateZ(${radius}px)`,
               }}
             >
-              <img src={cell.image.src} alt="" draggable={false} style={{ objectPosition: cell.image.position }} />
+              <img
+                src={galleryThumbnail(cell.image.src)}
+                alt=""
+                loading="lazy"
+                decoding="async"
+                fetchPriority="low"
+                draggable={false}
+                style={{ objectPosition: cell.image.position }}
+                onError={(event) => {
+                  const image = event.currentTarget;
+                  if (image.dataset.fallbackApplied) return;
+                  image.dataset.fallbackApplied = "true";
+                  image.src = cell.image.src;
+                }}
+              />
               <span className="dome-gallery__tile-label">{String((cell.index % images.length) + 1).padStart(2, "0")}</span>
             </button>
           ))}
@@ -169,7 +189,7 @@ export function DomeGallery({
         <div className="dome-gallery__lightbox" role="dialog" aria-modal="true" aria-label={selected.alt} onClick={() => setSelectedIndex(null)}>
           <button className="dome-gallery__close" type="button" aria-label="关闭照片预览" onClick={() => setSelectedIndex(null)}>ESC ×</button>
           <figure onClick={(event) => event.stopPropagation()}>
-            <img src={selected.src} alt={selected.alt} style={{ objectPosition: selected.position }} />
+            <img src={selected.src} alt={selected.alt} decoding="async" style={{ objectPosition: selected.position }} />
             <figcaption>{selected.alt}</figcaption>
           </figure>
         </div>
