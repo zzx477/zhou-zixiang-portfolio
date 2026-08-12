@@ -49,7 +49,7 @@ const photos = [
   { src: '/gallery/asset-46.png', alt: 'SELECTED VISUAL / 46', remoteSrc: 'https://zuopinji-1449420565.cos.ap-guangzhou.myqcloud.com/%E5%9B%BE%E7%89%87/%E8%90%A7%E6%99%AF%E7%90%9B%C2%B7%E8%A1%A8%E6%83%85%E4%B9%9D%E5%AE%AB%E6%A0%BC.png' },
 ];
 
-export const galleryPhotos = photos.map((photo) => ({
-  ...photo,
-  src: publicPath(photo.src),
+export const galleryPhotos = photos.map(({ src, alt }) => ({
+  src: publicPath(src),
+  alt,
 }));

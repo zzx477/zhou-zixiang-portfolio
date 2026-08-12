@@ -16,8 +16,15 @@ type Category = {
   name: string;
   en: string;
   note: string;
-  videos?: VideoItem[];
+  hasVideos?: boolean;
 };
+
+async function loadCategoryVideos(categoryNo: string): Promise<VideoItem[]> {
+  if (categoryNo === "01") return (await import("./aiComicVideos")).aiComicVideos;
+  if (categoryNo === "03") return (await import("./commercialVideos")).commercialVideos;
+  if (categoryNo === "04") return (await import("./entertainmentVideos")).entertainmentVideos;
+  return [];
+}
 
 function PortfolioVideo({ video }: { video: VideoItem }) {
   const [failed, setFailed] = useState(false);
@@ -33,7 +40,7 @@ function PortfolioVideo({ video }: { video: VideoItem }) {
           controls
           playsInline
           autoPlay
-          preload="metadata"
+          preload="none"
           controlsList="nodownload"
           onCanPlay={() => setFailed(false)}
           onError={() => setFailed(true)}
@@ -64,6 +71,20 @@ function PortfolioVideo({ video }: { video: VideoItem }) {
 
 export default function CategoryShowcase({ categories }: { categories: Category[] }) {
   const [active, setActive] = useState<Category | null>(null);
+  const [videos, setVideos] = useState<VideoItem[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const openCategory = async (category: Category) => {
+    setActive(category);
+    setVideos([]);
+    if (!category.hasVideos) return;
+    setIsLoading(true);
+    try {
+      setVideos(await loadCategoryVideos(category.no));
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (!active) return;
@@ -99,7 +120,7 @@ export default function CategoryShowcase({ categories }: { categories: Category[
             <button
               className="category-card cursor-target"
               type="button"
-              onClick={() => setActive(category)}
+              onClick={() => void openCategory(category)}
               aria-label={"打开" + category.name + "分类"}
             >
               <span className="category-card__index">{category.no}</span>
@@ -138,10 +159,10 @@ export default function CategoryShowcase({ categories }: { categories: Category[
               <h3>{active.name}</h3>
               <span>{active.note}</span>
             </div>
-            <div className={"category-video-frame" + (active.videos?.length ? " category-video-frame--collection" : "")}>
-              {active.videos?.length ? (
+            <div className={"category-video-frame" + (videos.length ? " category-video-frame--collection" : "")}>
+              {videos.length ? (
                 <div className="category-video-list">
-                  {active.videos.map((video, index) => (
+                  {videos.map((video, index) => (
                     <article className="category-video-item" key={video.url}>
                       <div className="category-video-item__media">
                         <PortfolioVideo video={video} />
@@ -153,6 +174,12 @@ export default function CategoryShowcase({ categories }: { categories: Category[
                       </div>
                     </article>
                   ))}
+                </div>
+              ) : isLoading ? (
+                <div className="category-video-placeholder" role="status">
+                  <span className="category-video-placeholder__orb" />
+                  <strong>LOADING ARCHIVE</strong>
+                  <small>正在载入视频作品…</small>
                 </div>
               ) : (
                 <div className="category-video-placeholder">

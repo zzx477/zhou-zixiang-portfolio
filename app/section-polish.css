@@ -690,6 +690,68 @@
 }
 .category-stage__backdrop { z-index: 0; opacity: 0.9; }
 .category-stage__backdrop canvas { display: block; }
+
+.deferred-ballpit,
+.deferred-ballpit__fallback {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.deferred-ballpit__fallback {
+  background:
+    radial-gradient(circle at 18% 28%, rgba(196, 226, 245, .78) 0 1px, transparent 2px),
+    radial-gradient(circle at 72% 22%, rgba(201, 168, 255, .72) 0 1px, transparent 2px),
+    radial-gradient(circle at 61% 71%, rgba(239, 164, 125, .64) 0 1px, transparent 2px),
+    radial-gradient(circle at 38% 82%, rgba(187, 219, 231, .56) 0 1px, transparent 2px);
+  background-size: 83px 83px, 127px 127px, 151px 151px, 109px 109px;
+  opacity: .72;
+  animation: deferred-stars-drift 18s linear infinite;
+}
+
+@keyframes deferred-stars-drift {
+  to { background-position: 83px 41px, -127px 63px, 75px -151px, -54px 109px; }
+}
+
+.deferred-gallery {
+  width: 100%;
+  min-height: clamp(620px, 70vw, 980px);
+}
+
+.deferred-gallery__loading {
+  min-height: inherit;
+  display: grid;
+  place-content: center;
+  gap: 18px;
+  color: rgba(225, 234, 241, .52);
+  font: 600 11px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: .22em;
+  background:
+    radial-gradient(circle at 50% 46%, rgba(110, 145, 170, .13), transparent 33%),
+    linear-gradient(180deg, rgba(12, 22, 29, .5), rgba(5, 9, 13, .2));
+}
+
+.deferred-gallery__loading i {
+  width: 180px;
+  height: 1px;
+  overflow: hidden;
+  background: rgba(205, 224, 239, .12);
+}
+
+.deferred-gallery__loading i::after {
+  content: "";
+  display: block;
+  width: 44%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, #c7a5ff, transparent);
+  animation: gallery-loader 1.5s ease-in-out infinite;
+}
+
+@keyframes gallery-loader {
+  from { transform: translateX(-110%); }
+  to { transform: translateX(330%); }
+}
 .category-stage__wash {
   position: absolute;
   z-index: 1;

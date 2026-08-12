@@ -2,15 +2,11 @@ import type { Metadata } from "next";
 import { HeroReference } from "./HeroReference";
 import { SiteTextEffects } from "./SiteTextEffects";
 import { SpecularCard } from "./SpecularCard";
-import { DomeGallery } from "./DomeGallery";
-import { Ballpit } from "./Ballpit";
+import DeferredBallpit from "./DeferredBallpit";
+import DeferredDomeGallery from "./DeferredDomeGallery";
 import CategoryShowcase from "./CategoryShowcase";
 import TargetCursor from "./TargetCursor";
 import { ScrollSidebar } from "./ScrollSidebar";
-import { galleryPhotos } from "./galleryPhotos";
-import { aiComicVideos } from "./aiComicVideos";
-import { commercialVideos } from "./commercialVideos";
-import { entertainmentVideos } from "./entertainmentVideos";
 import ShinyText from "./ShinyText";
 import TextPressure from "./TextPressure";
 import { ContactInstrument } from "./ContactInstrument";
@@ -27,10 +23,10 @@ const projects = [
 ];
 
 const categories = [
-  { no: "01", name: "AI漫剧", en: "AI COMIC DRAMA", note: "角色、世界观与情绪节奏", videos: aiComicVideos },
+  { no: "01", name: "AI漫剧", en: "AI COMIC DRAMA", note: "角色、世界观与情绪节奏", hasVideos: true },
   { no: "02", name: "短剧", en: "SHORT DRAMA", note: "叙事剪辑与人物关系" },
-  { no: "03", name: "商业广告", en: "COMMERCIAL", note: "品牌影像与转化节奏" , videos: commercialVideos },
-  { no: "04", name: "娱乐视频", en: "ENTERTAINMENT", note: "热点内容与视觉包装", videos: entertainmentVideos },
+  { no: "03", name: "商业广告", en: "COMMERCIAL", note: "品牌影像与转化节奏", hasVideos: true },
+  { no: "04", name: "娱乐视频", en: "ENTERTAINMENT", note: "热点内容与视觉包装", hasVideos: true },
 ];
 const strengths = [
   { no: "01", title: "剪辑与叙事", text: "熟悉短剧剪辑逻辑，以节奏、情绪和信息密度推动故事，让观众愿意看到下一秒。", tags: "PR / 剪映 / 节奏把控" },
@@ -128,7 +124,7 @@ export default function Home() {
           <p className="works-title__sub">在镜头之间，找到故事真正的重心。</p>
         </div>
         <div className="category-stage">
-          <div className="category-stage__backdrop"><Ballpit count={84} gravity={0.012} friction={0.994} wallBounce={0.94} followCursor colors={[0xbfd9df, 0x7696a1, 0xd18a6a, 0xaeb9b7, 0x9bb7bd]} ambientColor={0xe7f2f3} ambientIntensity={1.75} lightIntensity={300} minSize={0.14} maxSize={0.36} maxVelocity={0.1} /></div>
+          <div className="category-stage__backdrop"><DeferredBallpit /></div>
           <div className="category-stage__wash" aria-hidden="true" />
           <div className="category-stage__topline"><span>SELECT BY FORM</span><span>04 CATEGORIES / 2026</span></div>
           <CategoryShowcase categories={categories} />
@@ -160,7 +156,7 @@ export default function Home() {
         <div className="container">
           <div className="section-head work-head"><p className="eyebrow">03 / SELECTED WORK</p><h2>AI资产展示</h2><p className="work-intro">A rotating visual archive for selected frames. Drag to explore, click to focus.</p></div>
           <div className="gallery-shell">
-            <DomeGallery images={galleryPhotos} grayscale={false} />
+            <DeferredDomeGallery />
             <div className="gallery-shell__caption"><span>PHOTO ARCHIVE / 2026</span><span>18 SELECTED FRAMES</span></div>
           </div>
         </div>
