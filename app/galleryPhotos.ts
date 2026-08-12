@@ -1,4 +1,6 @@
-export const galleryPhotos = [
+import { publicPath } from './public-paths';
+
+const photos = [
   { src: '/gallery/asset-01.png', alt: 'SELECTED VISUAL / 01', remoteSrc: 'https://zuopinji-1449420565.cos.ap-guangzhou.myqcloud.com/%E5%9B%BE%E7%89%87/ChatGPT%20Image%202026%E5%B9%B47%E6%9C%8810%E6%97%A5%2001_17_20.png' },
   { src: '/gallery/asset-02.png', alt: 'SELECTED VISUAL / 02', remoteSrc: 'https://zuopinji-1449420565.cos.ap-guangzhou.myqcloud.com/%E5%9B%BE%E7%89%87/ChatGPT%20Image%202026%E5%B9%B47%E6%9C%8810%E6%97%A5%2001_18_07.png' },
   { src: '/gallery/asset-03.png', alt: 'SELECTED VISUAL / 03', remoteSrc: 'https://zuopinji-1449420565.cos.ap-guangzhou.myqcloud.com/%E5%9B%BE%E7%89%87/ChatGPT%20Image%202026%E5%B9%B47%E6%9C%8810%E6%97%A5%2001_35_08.png' },
@@ -46,3 +48,8 @@ export const galleryPhotos = [
   { src: '/gallery/asset-45.png', alt: 'SELECTED VISUAL / 45', remoteSrc: 'https://zuopinji-1449420565.cos.ap-guangzhou.myqcloud.com/%E5%9B%BE%E7%89%87/%E8%8B%8F%E6%A3%A0%E7%9A%84%E8%A1%A8%E6%83%85%E4%B9%9D%E5%AE%AB%E6%A0%BC.png' },
   { src: '/gallery/asset-46.png', alt: 'SELECTED VISUAL / 46', remoteSrc: 'https://zuopinji-1449420565.cos.ap-guangzhou.myqcloud.com/%E5%9B%BE%E7%89%87/%E8%90%A7%E6%99%AF%E7%90%9B%C2%B7%E8%A1%A8%E6%83%85%E4%B9%9D%E5%AE%AB%E6%A0%BC.png' },
 ];
+
+export const galleryPhotos = photos.map((photo) => ({
+  ...photo,
+  src: publicPath(photo.src),
+}));

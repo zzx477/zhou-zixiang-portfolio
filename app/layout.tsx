@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import "./hero-reference.css";
 import "./section-polish.css";
+import { publicPath } from "./public-paths";
 
 export const metadata: Metadata = {
   title: {
@@ -10,8 +11,8 @@ export const metadata: Metadata = {
   },
   description: "周子翔个人作品集：视频剪辑、AI 视觉设计、AI 漫剧与内容创作。",
   icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg",
+    icon: publicPath("/favicon.svg"),
+    shortcut: publicPath("/favicon.svg"),
   },
 };
 

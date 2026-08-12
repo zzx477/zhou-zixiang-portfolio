@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, type CSSProperties, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, type CSSProperties, type PointerEvent as ReactPointerEvent, type ReactNode } from "react";
 import "./BorderGlow.css";
 
 type BorderGlowProps = {
@@ -76,7 +76,7 @@ export default function BorderGlow({
     const rect = element.getBoundingClientRect();
     return [rect.width / 2, rect.height / 2] as const;
   }, []);
-  const updatePointer = useCallback((event: PointerEvent) => {
+  const updatePointer = useCallback((event: ReactPointerEvent<HTMLDivElement>) => {
     const card = cardRef.current;
     if (!card) return;
     const rect = card.getBoundingClientRect();

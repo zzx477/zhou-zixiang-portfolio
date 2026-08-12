@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import BorderGlow from "./BorderGlow";
+import { publicPath } from "./public-paths";
 
 type VideoItem = {
   title: string;
@@ -102,7 +103,7 @@ export default function CategoryShowcase({ categories }: { categories: Category[
                       <div className="category-video-item__media">
                         <video
                           src={video.url}
-                          poster={video.poster}
+                          poster={publicPath(video.poster)}
                           controls
                           playsInline
                           preload="none"

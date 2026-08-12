@@ -6,6 +6,7 @@ import TextType from "./TextType";
 import { StickyHeader } from "./StickyHeader";
 import Galaxy from "./Galaxy";
 import CircularText from "./CircularText";
+import { publicPath } from "./public-paths";
 
 function Arrow() {
   return <span aria-hidden="true">↗</span>;
@@ -115,7 +116,7 @@ export function HeroReference() {
       <div className="reference-art" aria-hidden="true">
         <img
           className="hero-character-image"
-          src="/hero-character-clean.png"
+          src={publicPath("/hero-character-clean.png")}
           alt=""
         />
       </div>
@@ -186,7 +187,7 @@ export function HeroReference() {
         {reel.map((item, index) => (
           <a className={`reel-card reel-${item.visual} cursor-target`} href={item.link || "#work"} onClick={(event) => { if (item.link) { event.preventDefault(); setActiveVideo(item.link); setIsVideoPlaying(false); } }} key={item.title}>
             <div className="reel-media">
-              {item.poster && <img className="reel-poster-image" src={item.poster} alt={`${item.title}视频封面`} />}
+              {item.poster && <img className="reel-poster-image" src={publicPath(item.poster)} alt={`${item.title}视频封面`} />}
               <span className="reel-category">{item.category}</span>
 '              <span className="reel-play">▶</span>'
             </div>
@@ -204,10 +205,10 @@ export function HeroReference() {
         <div className="video-player-modal" role="dialog" aria-modal="true" aria-label="AI漫剧视频播放器" onClick={() => { setActiveVideo(null); setIsVideoPlaying(false); }}>
           <div className="video-player-frame" onClick={(event) => event.stopPropagation()}>
             <button className="video-player-close" type="button" aria-label="关闭视频" onClick={() => { setActiveVideo(null); setIsVideoPlaying(false); }}>CLOSE ×</button>
-            <video ref={videoRef} src={activeVideo} poster={activeVideoItem?.poster || "/feng-jiuyou-poster.png"} controls playsInline preload="metadata" controlsList="nodownload" disablePictureInPicture onEnded={() => setIsVideoPlaying(false)} onContextMenu={(event) => event.preventDefault()} />
+            <video ref={videoRef} src={activeVideo} poster={publicPath(activeVideoItem?.poster || "/feng-jiuyou-poster.png")} controls playsInline preload="metadata" controlsList="nodownload" disablePictureInPicture onEnded={() => setIsVideoPlaying(false)} onContextMenu={(event) => event.preventDefault()} />
             {!isVideoPlaying && (
               <button className={`video-player-cover video-player-cover--${activeVideoItem?.visual || "office"}`} type="button" aria-label="播放封九幽" onClick={() => { setIsVideoPlaying(true); requestAnimationFrame(() => { void videoRef.current?.play(); }); }}>
-                <img src={activeVideoItem?.poster || "/feng-jiuyou-poster.png"} alt={`${activeVideoItem?.title || "AI漫剧"}视频封面`} />
+                <img src={publicPath(activeVideoItem?.poster || "/feng-jiuyou-poster.png")} alt={`${activeVideoItem?.title || "AI漫剧"}视频封面`} />
                 <span><i>▶</i> PLAY AI COMIC</span>
               </button>
             )}
