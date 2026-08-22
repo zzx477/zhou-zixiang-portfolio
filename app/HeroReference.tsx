@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import SplitText from "./SplitText";
 import TextType from "./TextType";
 import { StickyHeader } from "./StickyHeader";
-import Galaxy from "./Galaxy";
+import DeferredGalaxy from "./DeferredGalaxy";
 import CircularText from "./CircularText";
 import { publicPath } from "./public-paths";
 
@@ -137,7 +137,7 @@ export function HeroReference() {
         <span className="hero-ambient__ring hero-ambient__ring--outer" />
         <span className="hero-ambient__ring hero-ambient__ring--inner" />
         <span className="hero-ambient__grain" />
-        <div className="hero-galaxy"><Galaxy focal={[0.62, 0.46]} rotation={[0.98, 0.04]} starSpeed={0.32} density={0.86} hueShift={190} speed={0.7} glowIntensity={0.72} saturation={0.24} twinkleIntensity={0.52} rotationSpeed={0.035} repulsionStrength={1.35} transparent /></div>
+        <div className="hero-galaxy"><DeferredGalaxy /></div>
       </div>
       <div className="reference-art" aria-hidden="true">
         <img

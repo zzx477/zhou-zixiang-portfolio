@@ -1,7 +1,6 @@
 "use client";
 
 import { createElement, useCallback, useEffect, useMemo, useRef, useState, type ElementType, type ReactNode } from "react";
-import { gsap } from "gsap";
 import "./TextType.css";
 
 type TextTypeProps = {
@@ -52,7 +51,6 @@ export default function TextType({
   const [isDeleting, setIsDeleting] = useState(false);
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(!startOnVisible);
-  const cursorRef = useRef<HTMLSpanElement>(null);
   const containerRef = useRef<HTMLElement>(null);
   const textArray = useMemo(() => (Array.isArray(text) ? text : [text]), [text]);
 
@@ -69,14 +67,6 @@ export default function TextType({
     observer.observe(containerRef.current);
     return () => observer.disconnect();
   }, [startOnVisible]);
-
-  useEffect(() => {
-    if (!showCursor || !cursorRef.current) return;
-    const cursor = cursorRef.current;
-    gsap.set(cursor, { opacity: 1 });
-    const tween = gsap.to(cursor, { opacity: 0, duration: cursorBlinkDuration, repeat: -1, yoyo: true, ease: "power2.inOut" });
-    return () => tween.kill();
-  }, [showCursor, cursorBlinkDuration]);
 
   useEffect(() => {
     if (!isVisible) return;
@@ -121,8 +111,8 @@ export default function TextType({
 
   return createElement(
     Component,
-    { ref: containerRef, className: `text-type ${className}`, ...props },
-    <span className="text-type__content" style={{ color }}>{displayedText}</span>,
-    showCursor && <span ref={cursorRef} className={`text-type__cursor ${cursorClassName} ${shouldHideCursor ? "text-type__cursor--hidden" : ""}`}>{cursorCharacter}</span>
+    { className: `text-type ${className}`, ...props },
+    <span ref={containerRef} className="text-type__content" style={{ color }}>{displayedText}</span>,
+    showCursor && <span style={{ "--cursor-blink-duration": `${cursorBlinkDuration}s` } as React.CSSProperties} className={`text-type__cursor ${cursorClassName} ${shouldHideCursor ? "text-type__cursor--hidden" : ""}`}>{cursorCharacter}</span>
   );
 }

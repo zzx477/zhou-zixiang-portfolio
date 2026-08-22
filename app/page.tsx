@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import { HeroReference } from "./HeroReference";
-import { SiteTextEffects } from "./SiteTextEffects";
+import DeferredEnhancements from "./DeferredEnhancements";
 import { SpecularCard } from "./SpecularCard";
 import DeferredBallpit from "./DeferredBallpit";
 import DeferredDomeGallery from "./DeferredDomeGallery";
 import CategoryShowcase from "./CategoryShowcase";
-import TargetCursor from "./TargetCursor";
 import { ScrollSidebar } from "./ScrollSidebar";
 import ShinyText from "./ShinyText";
 import TextPressure from "./TextPressure";
@@ -23,10 +22,9 @@ const projects = [
 ];
 
 const categories = [
-  { no: "01", name: "AI漫剧", en: "AI COMIC DRAMA", note: "角色、世界观与情绪节奏", hasVideos: true },
-  { no: "02", name: "短剧", en: "SHORT DRAMA", note: "叙事剪辑与人物关系" },
-  { no: "03", name: "商业广告", en: "COMMERCIAL", note: "品牌影像与转化节奏", hasVideos: true },
-  { no: "04", name: "娱乐视频", en: "ENTERTAINMENT", note: "热点内容与视觉包装", hasVideos: true },
+  { no: "01", name: "AI漫剧", en: "AI COMIC DRAMA", note: "角色、世界观与情绪节奏", videoSource: "ai-comic" },
+  { no: "02", name: "商业广告", en: "COMMERCIAL", note: "品牌影像与转化节奏", videoSource: "commercial" },
+  { no: "03", name: "娱乐视频", en: "ENTERTAINMENT", note: "热点内容与视觉包装", videoSource: "entertainment" },
 ];
 const strengths = [
   { no: "01", title: "剪辑与叙事", text: "熟悉短剧剪辑逻辑，以节奏、情绪和信息密度推动故事，让观众愿意看到下一秒。", tags: "PR / 剪映 / 节奏把控" },
@@ -101,8 +99,7 @@ function ProjectVisual({ kind }: { kind: string }) {
 export default function Home() {
   return (
     <main>
-      <SiteTextEffects />
-      <TargetCursor targetSelector=".cursor-target" spinDuration={6} cursorColor="#c7a5ff" cursorColorOnTarget="#e7c4ff" />
+      <DeferredEnhancements />
       <HeroReference />
       <ScrollSidebar />
 
@@ -126,7 +123,7 @@ export default function Home() {
         <div className="category-stage">
           <div className="category-stage__backdrop"><DeferredBallpit /></div>
           <div className="category-stage__wash" aria-hidden="true" />
-          <div className="category-stage__topline"><span>SELECT BY FORM</span><span>04 CATEGORIES / 2026</span></div>
+          <div className="category-stage__topline"><span>SELECT BY FORM</span><span>03 CATEGORIES / 2026</span></div>
           <CategoryShowcase categories={categories} />
           <div className="category-stage__hint"><span>MOVE CURSOR TO DISTURB THE FIELD</span><span>SCROLL TO EXPLORE WORKS ↓</span></div>
         </div>        <div className="profile-grid">

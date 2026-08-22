@@ -752,6 +752,16 @@
   from { transform: translateX(-110%); }
   to { transform: translateX(330%); }
 }
+
+@supports (content-visibility: auto) {
+  .experience,
+  .work--gallery,
+  .strengths,
+  .contact {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 1080px;
+  }
+}
 .category-stage__wash {
   position: absolute;
   z-index: 1;
@@ -778,7 +788,7 @@
   position: relative;
   z-index: 3;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
   padding: clamp(76px, 9vw, 126px) clamp(20px, 3vw, 42px) clamp(76px, 8vw, 110px);
 }
@@ -835,13 +845,15 @@
 
 @media (max-width: 920px) {
   .category-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .category-grid > .category-card-glow:last-child { grid-column: 1 / -1; }
   .category-card { min-height: 210px; }
 }
 @media (max-width: 560px) {
   .category-stage { min-height: 720px; }
   .category-stage__topline, .category-stage__hint { font-size: 8px; letter-spacing: .1em; }
   .category-stage__topline span:last-child, .category-stage__hint span:last-child { display: none; }
-  .category-grid { grid-template-columns: 1fr 1fr; gap: 8px; padding: 70px 14px 68px; }
+  .category-grid { grid-template-columns: 1fr; gap: 8px; padding: 70px 14px 68px; }
+  .category-grid > .category-card-glow:last-child { grid-column: auto; }
   .category-card { min-height: 238px; padding: 18px; }
   .category-card__name { font-size: 24px; }
   .category-card__note { font-size: 11px; }

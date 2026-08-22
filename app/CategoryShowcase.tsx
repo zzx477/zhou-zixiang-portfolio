@@ -16,13 +16,13 @@ type Category = {
   name: string;
   en: string;
   note: string;
-  hasVideos?: boolean;
+  videoSource?: string;
 };
 
-async function loadCategoryVideos(categoryNo: string): Promise<VideoItem[]> {
-  if (categoryNo === "01") return (await import("./aiComicVideos")).aiComicVideos;
-  if (categoryNo === "03") return (await import("./commercialVideos")).commercialVideos;
-  if (categoryNo === "04") return (await import("./entertainmentVideos")).entertainmentVideos;
+async function loadCategoryVideos(videoSource?: string): Promise<VideoItem[]> {
+  if (videoSource === "ai-comic") return (await import("./aiComicVideos")).aiComicVideos;
+  if (videoSource === "commercial") return (await import("./commercialVideos")).commercialVideos;
+  if (videoSource === "entertainment") return (await import("./entertainmentVideos")).entertainmentVideos;
   return [];
 }
 
@@ -77,10 +77,10 @@ export default function CategoryShowcase({ categories }: { categories: Category[
   const openCategory = async (category: Category) => {
     setActive(category);
     setVideos([]);
-    if (!category.hasVideos) return;
+    if (!category.videoSource) return;
     setIsLoading(true);
     try {
-      setVideos(await loadCategoryVideos(category.no));
+      setVideos(await loadCategoryVideos(category.videoSource));
     } finally {
       setIsLoading(false);
     }

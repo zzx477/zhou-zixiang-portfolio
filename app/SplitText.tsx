@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties, type ElementType } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { SplitText as GSAPSplitText } from "gsap/SplitText";
-import { useGSAP } from "@gsap/react";
-
-gsap.registerPlugin(ScrollTrigger, GSAPSplitText, useGSAP);
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ElementType,
+} from "react";
 
 type MotionVars = Record<string, string | number | boolean>;
 
@@ -26,132 +27,55 @@ type SplitTextProps = {
   onLetterAnimationComplete?: () => void;
 };
 
-type SplitElement = HTMLElement & { _rbsplitInstance?: GSAPSplitText | null };
-
 export default function SplitText({
   text,
   className = "",
   delay = 50,
   duration = 1.25,
-  ease = "power3.out",
   splitType = "chars",
   from = { opacity: 0, y: 40 },
-  to = { opacity: 1, y: 0 },
   threshold = 0.1,
   rootMargin = "-100px",
   textAlign = "center",
   tag: Tag = "p",
   onLetterAnimationComplete,
 }: SplitTextProps) {
-  const ref = useRef<SplitElement>(null);
-  const animationCompletedRef = useRef(false);
-  const onCompleteRef = useRef(onLetterAnimationComplete);
-  const [fontsLoaded, setFontsLoaded] = useState(false);
+  const ref = useRef<HTMLElement>(null);
+  const callbackRef = useRef(onLetterAnimationComplete);
+  const [visible, setVisible] = useState(false);
+  const splitByWord = splitType === "words" || splitType === "lines";
+  const units = useMemo(
+    () => splitByWord ? text.split(/(\s+)/) : Array.from(text),
+    [splitByWord, text],
+  );
 
   useEffect(() => {
-    onCompleteRef.current = onLetterAnimationComplete;
+    callbackRef.current = onLetterAnimationComplete;
   }, [onLetterAnimationComplete]);
 
   useEffect(() => {
-    let active = true;
-    if (document.fonts.status === "loaded") {
-      setFontsLoaded(true);
-      return () => {
-        active = false;
-      };
-    }
-    document.fonts.ready.then(() => {
-      if (active) setFontsLoaded(true);
-    });
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  useGSAP(
-    () => {
-      const el = ref.current;
-      if (!el || !text || !fontsLoaded || animationCompletedRef.current) return;
-
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        animationCompletedRef.current = true;
-        onCompleteRef.current?.();
-        return;
-      }
-
-      el._rbsplitInstance?.revert();
-      el._rbsplitInstance = null;
-
-      const startPct = (1 - threshold) * 100;
-      const marginMatch = /^(-?\d+(?:\.\d+)?)(px|em|rem|%)?$/.exec(rootMargin);
-      const marginValue = marginMatch ? Number.parseFloat(marginMatch[1]) : 0;
-      const marginUnit = marginMatch?.[2] || "px";
-      const sign = marginValue === 0 ? "" : marginValue < 0
-        ? `-=${Math.abs(marginValue)}${marginUnit}`
-        : `+=${marginValue}${marginUnit}`;
-      const start = `top ${startPct}%${sign}`;
-      let targets: Element[] = [];
-
-      const splitInstance = new GSAPSplitText(el, {
-        type: splitType,
-        smartWrap: true,
-        autoSplit: splitType === "lines",
-        linesClass: "split-line",
-        wordsClass: "split-word",
-        charsClass: "split-char",
-        reduceWhiteSpace: false,
-        onSplit: (self) => {
-          if (splitType.includes("chars") && self.chars.length) targets = self.chars;
-          else if (splitType.includes("words") && self.words.length) targets = self.words;
-          else targets = self.lines;
-
-          return gsap.fromTo(
-            targets,
-            { ...from },
-            {
-              ...to,
-              duration,
-              ease,
-              stagger: delay / 1000,
-              scrollTrigger: {
-                trigger: el,
-                start,
-                once: true,
-                fastScrollEnd: true,
-                anticipatePin: 0.4,
-              },
-              onComplete: () => {
-                animationCompletedRef.current = true;
-                onCompleteRef.current?.();
-              },
-              force3D: true,
-            },
-          );
-        },
+    const element = ref.current;
+    if (!element) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      const frame = window.requestAnimationFrame(() => {
+        setVisible(true);
+        callbackRef.current?.();
       });
+      return () => window.cancelAnimationFrame(frame);
+    }
 
-      el._rbsplitInstance = splitInstance;
-      return () => {
-        splitInstance.revert();
-        el._rbsplitInstance = null;
-      };
-    },
-    {
-      dependencies: [
-        text,
-        delay,
-        duration,
-        ease,
-        splitType,
-        JSON.stringify(from),
-        JSON.stringify(to),
-        threshold,
-        rootMargin,
-        fontsLoaded,
-      ],
-      scope: ref,
-    },
-  );
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      setVisible(true);
+      observer.disconnect();
+      window.setTimeout(
+        () => callbackRef.current?.(),
+        duration * 1000 + Math.max(0, units.length - 1) * delay,
+      );
+    }, { threshold, rootMargin });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [delay, duration, rootMargin, threshold, units.length]);
 
   const style: CSSProperties = {
     textAlign,
@@ -162,8 +86,24 @@ export default function SplitText({
   };
 
   return (
-    <Tag ref={ref} style={style} className={`split-parent ${className}`}>
-      {text}
+    <Tag ref={ref} style={style} className={`split-parent split-lite ${visible ? "is-visible" : ""} ${className}`}>
+      <span className="split-lite__visual" aria-hidden="true">
+        {units.map((unit, index) => unit.trim() ? (
+          <span
+            className={splitByWord ? "split-word" : "split-char"}
+            key={`${unit}-${index}`}
+            style={{
+              "--split-delay": `${index * delay}ms`,
+              "--split-duration": `${duration}s`,
+              "--split-y": `${Number(from.y ?? 28)}px`,
+              "--split-opacity": String(from.opacity ?? 0),
+            } as CSSProperties}
+          >
+            {unit}
+          </span>
+        ) : <span key={`space-${index}`}>{unit}</span>)}
+      </span>
+      <span className="visually-hidden">{text}</span>
     </Tag>
   );
 }
